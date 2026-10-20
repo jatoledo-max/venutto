@@ -94,7 +94,7 @@ test("mensaje de WhatsApp: singular y plural, sin x, importes de la cotización"
   assert.match(ret, /Entrega: Retiro en el local\nPago: Dividido \(\$20\.000 en efectivo y \$27\.100 por transferencia\)\n\nSubtotal de productos: \$47\.100\nTOTAL: \$47\.100$/);
   assert.doesNotMatch(ret, /Ubicación|Envío/);
   const sinEnvio = armarMensaje({ ...COT, envio: null, envio_a_confirmar: true, total: 47100 }, { entrega: "delivery", pago: "efectivo" });
-  assert.match(sinEnvio, /Envío: a confirmar\nTOTAL sin el envío: \$47\.100$/);
+  assert.match(sinEnvio, /Envío: a confirmar\nTOTAL: \*SIN EL ENVÍO\*: \$47\.100$/);
 });
 
 test("URL de WhatsApp con el número oficial y el texto codificado", () => {

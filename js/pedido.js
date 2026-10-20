@@ -105,7 +105,7 @@ export function armarMensaje(cot, d, negocio) {
   if (d.entrega === "delivery") {
     if (cot.envio_a_confirmar) {
       r.push("Envío: a confirmar");
-      r.push("TOTAL sin el envío: " + pesos(cent(cot.total)));
+      r.push("TOTAL: *SIN EL ENVÍO*: " + pesos(cent(cot.total)));
     } else {
       r.push("Envío: " + pesos(cent(cot.envio)));
       r.push("TOTAL: " + pesos(cent(cot.total)));
