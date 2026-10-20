@@ -1,0 +1,9 @@
+{
+  "name": "venutto-menu",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "tests/e2e/correr.sh"
+  }
+}

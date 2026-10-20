@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Hacé tu pedido — Venutto Fast Food</title>
+    <meta name="description" content="Elegí tu pedido de Venutto, mirá el total y mandalo por WhatsApp.">
+    <meta name="theme-color" content="#0c0c0c">
+    <link rel="icon" href="./Logo.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/pedir.css">
+</head>
+
+<body>
+    <a class="saltar" href="#productos">Saltar al menú</a>
+
+    <header class="cabecera">
+        <a class="marca" href="./index.html">
+            <img src="./Logo.jpeg" alt="" width="44" height="44">
+            <span>Venutto</span>
+        </a>
+        <a class="cabecera-link" href="./index.html">Inicio</a>
+    </header>
+
+    <!-- Paso 1: elegir productos -->
+    <main id="paso-menu" class="paso">
+        <div class="intro">
+            <h1>Hacé tu pedido</h1>
+            <p>Elegí lo que quieras, revisá el total y mandanos el pedido por WhatsApp. Te respondemos para confirmarlo.</p>
+            <p class="estado" id="estado-local" hidden></p>
+            <p class="aviso-negocio" id="aviso-negocio" hidden></p>
+        </div>
+
+        <div id="cargando" class="cargando" role="status">Cargando el menú y los precios…</div>
+        <div id="error-menu" class="error-caja" role="alert" hidden></div>
+        <div id="cambios-precio" class="aviso-cambios" role="alert" hidden></div>
+
+        <nav class="categorias" id="categorias" aria-label="Categorías del menú" hidden></nav>
+        <div id="productos"></div>
+    </main>
+
+    <!-- Paso 2: revisar el pedido y completar los datos -->
+    <main id="paso-pedido" class="paso" hidden>
+        <button class="volver" type="button" id="volver-menu">← Seguir eligiendo</button>
+        <h1 tabindex="-1" id="titulo-pedido">Tu pedido</h1>
+        <div id="cambios-precio-2" class="aviso-cambios" role="alert" hidden></div>
+        <ul class="lineas" id="lineas"></ul>
+        <p class="vacio" id="pedido-vacio" hidden>Tu pedido está vacío. Tocá «Seguir eligiendo» para agregar productos.</p>
+
+        <form id="datos" novalidate>
+            <fieldset class="pregunta" id="q-entrega">
+                <legend>¿Cómo querés recibir tu pedido?</legend>
+                <div class="opciones-grandes">
+                    <label class="opcion"><input type="radio" name="entrega" value="delivery"> <span><b>Delivery</b><small id="txt-envio"></small></span></label>
+                    <label class="opcion"><input type="radio" name="entrega" value="retiro"> <span><b>Retiro</b><small>Lo buscás en el local</small></span></label>
+                </div>
+                <p class="error-campo" id="err-entrega" hidden></p>
+            </fieldset>
+
+            <fieldset class="pregunta" id="q-direccion" hidden>
+                <legend>¿Dónde lo llevamos?</legend>
+                <label class="campo">Calle<input id="calle" name="calle" autocomplete="address-line1" maxlength="80" aria-describedby="err-calle"></label>
+                <p class="error-campo" id="err-calle" hidden></p>
+                <label class="campo">Número<input id="numero" name="numero" inputmode="text" maxlength="12" aria-describedby="err-numero"></label>
+                <p class="error-campo" id="err-numero" hidden></p>
+                <label class="campo">Barrio o zona <span class="opc">(opcional)</span><input id="barrio" name="barrio" maxlength="60"></label>
+                <label class="campo">Referencias <span class="opc">(opcional)</span><input id="referencias" name="referencias" maxlength="120" placeholder="Ej: portón negro, timbre 2"></label>
+                <p class="ayuda">Si te queda más cómodo, después podés mandarnos tu ubicación por WhatsApp.</p>
+            </fieldset>
+
+            <fieldset class="pregunta" id="q-pago">
+                <legend>¿Cómo vas a pagar?</legend>
+                <div class="opciones-grandes" id="opciones-pago"></div>
+                <p class="error-campo" id="err-pago" hidden></p>
+                <div class="alias" id="alias" hidden>
+                    <span>Alias para transferir: <b id="alias-texto"></b></span>
+                    <button type="button" class="btn-secundario" id="copiar-alias">Copiar alias</button>
+                </div>
+                <label class="campo" id="campo-efectivo" hidden>¿Cuánto pagás en efectivo? <span class="opc">(opcional)</span>
+                    <input id="efectivo" name="efectivo" inputmode="numeric" maxlength="10" placeholder="Ej: 10000" aria-describedby="err-efectivo"></label>
+                <p class="error-campo" id="err-efectivo" hidden></p>
+            </fieldset>
+
+            <fieldset class="pregunta">
+                <legend>Últimos detalles <span class="opc">(opcional)</span></legend>
+                <label class="campo">Tu nombre<input id="nombre" name="nombre" autocomplete="given-name" maxlength="40"></label>
+                <label class="campo">Observaciones<textarea id="observaciones" name="observaciones" rows="2" maxlength="200" placeholder="Ej: sin tomate"></textarea></label>
+            </fieldset>
+
+            <div class="resumen" id="resumen" aria-live="polite"></div>
+            <p class="ayuda">Al tocar el botón se abre WhatsApp con tu pedido escrito. <b>Para mandarlo, tocá Enviar en WhatsApp.</b> Te respondemos para confirmar disponibilidad y tiempo de entrega.</p>
+            <p class="error-caja" id="error-envio" role="alert" hidden></p>
+            <button type="submit" class="btn-wa" id="enviar">Enviar pedido por WhatsApp</button>
+        </form>
+    </main>
+
+    <!-- Paso 3: WhatsApp abierto -->
+    <main id="paso-listo" class="paso" hidden>
+        <h1 tabindex="-1" id="titulo-listo">Falta un paso: tocá Enviar en WhatsApp</h1>
+        <p class="grande">Abrimos WhatsApp con tu pedido escrito. <b>Si no lo mandás desde WhatsApp, no nos llega.</b></p>
+        <p>Cuando lo recibamos te respondemos para confirmar disponibilidad, el total y el tiempo de entrega.</p>
+        <a class="btn-wa" id="abrir-wa" href="#">Abrir WhatsApp de nuevo</a>
+        <button type="button" class="btn-secundario ancho" id="volver-pedido">Volver a mi pedido</button>
+        <button type="button" class="btn-secundario ancho" id="nuevo-pedido">Empezar un pedido nuevo</button>
+    </main>
+
+    <!-- Barra inferior: cantidad, total y seguir -->
+    <div class="barra" id="barra" hidden>
+        <div class="barra-info"><span id="barra-cant"></span><b id="barra-total"></b></div>
+        <button type="button" class="btn-principal" id="ver-pedido">Ver mi pedido</button>
+    </div>
+
+    <div class="aviso-flotante" id="aviso" role="status" aria-live="polite"></div>
+
+    <script type="module" src="./js/pedir.js"></script>
+</body>
+
+</html>

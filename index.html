@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venutto Fast Food — Lomitos, Hamburguesas & Sánguches | Santiago del Estero</title>
+    <meta name="description"
+        content="Venutto Fast Food. Lomitos, hamburguesas y sándwich de milanesa en La Banda. Delivery y take away. Armá tu pedido y confirmalo por WhatsApp.">
+    <meta property="og:title" content="Venutto Fast Food — Comida con sabor">
+    <meta property="og:description"
+        content="Lomitos, hamburguesas y sánguches. Delivery y take away. Pedí online y confirmá por WhatsApp.">
+    <meta property="og:image" content="https://venutto.netlify.app/Logo.jpeg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+
+    <!-- ── Navbar ─────────────────────────────────────────────── -->
+    <nav class="navbar" id="navbar">
+        <a class="nav-logo" href="#">
+            <img src="./Logo.jpeg" alt="Venutto Logo">
+            <div class="nav-logo-texto">Venutto<span>Fast Food</span></div>
+        </a>
+        <div class="nav-links">
+            <a href="#menu">Menú</a>
+            <a href="#como-pedir">Cómo pedir</a>
+            <a href="#horarios">Horarios</a>
+            <a class="nav-wa" href="./pedir.html">
+                <i class="bi bi-bag-plus"></i> Armar pedido
+            </a>
+        </div>
+    </nav>
+
+
+    <!-- ── Hero ───────────────────────────────────────────────── -->
+    <section class="hero" id="inicio">
+        <div class="hero-bg"></div>
+        <div class="hero-acento"></div>
+        <div class="hero-contenido">
+            <img src="./Logo.jpeg" alt="Venutto" class="hero-logo-grande">
+            <div class="hero-tag">🔥 Delivery & Take Away · La Banda</div>
+            <h1>Comida<br>con <em>sabor.</em></h1>
+            <p class="hero-sub">Lomitos, hamburguesas y sánguches de milanesa hechos con pasión. Armá tu pedido,
+                mirá el total al instante y confirmalo por WhatsApp — sin idas y vueltas.</p>
+            <div class="hero-botones">
+                <a href="#menu" class="btn-outline"><i class="bi bi-list-ul"></i> Ver menú</a>
+                <a href="./pedir.html" class="btn-naranja"><i class="bi bi-bag-plus"></i> Armar mi pedido</a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ── Banda ───────────────────────────────────────────────── -->
+    <div class="banda">
+        <div class="banda-item"><i class="bi bi-bicycle"></i> Delivery</div>
+        <div class="banda-item"><i class="bi bi-bag-check"></i> Take Away</div>
+        <div class="banda-item"><i class="bi bi-whatsapp"></i> Pedido por WhatsApp</div>
+        <div class="banda-item"><i class="bi bi-clock"></i> <span id="banda-horario">Jueves a domingo de 21 a 1 h</span></div>
+    </div>
+
+
+    <!-- ── Menú (vitrina) ─────────────────────────────────────── -->
+    <section class="sec" id="menu">
+        <div class="sec-header">
+            <p class="sec-tag">Lo que hacemos</p>
+            <h2 class="sec-titulo">El menú</h2>
+        </div>
+
+        <!-- Tabs y cards: js/vitrina.js, con los precios de la calculadora -->
+        <div class="menu-tabs" id="menu-tabs"></div>
+        <div id="menu-paneles"></div>
+
+        <!-- CTA para pasar al armador -->
+        <div class="vitrina-cta">
+            <div>
+                <h3>¿Listo para pedir?</h3>
+                <p>Armá tu pedido, elegí retiro o envío y confirmalo por WhatsApp en un toque.</p>
+            </div>
+            <a href="./pedir.html" class="btn-naranja"><i class="bi bi-bag-plus"></i> Armar mi pedido</a>
+        </div>
+
+        <!-- Foto real de las papas -->
+        <div class="promo-foto-wrap">
+            <div class="promo-foto">
+                <img src="./papas-cheddar.jpeg" alt="Papas con cheddar Venutto">
+            </div>
+            <div class="promo-texto">
+                <p class="sec-tag">Así salen</p>
+                <h2 class="sec-titulo">Papas con<br><em style="font-style:italic;color:var(--naranja)">Cheddar</em></h2>
+                <p>Papas fritas bien crocantes, bañadas en cheddar caliente y con verdeo fresco. Las que todo el mundo
+                    pide de extra.</p>
+                <a href="./pedir.html" class="btn-naranja"><i class="bi bi-bag-plus"></i> Agregar a mi pedido</a>
+            </div>
+        </div>
+
+        <!-- Adicionales -->
+        <div style="margin-top:44px;" id="adicionales-wrap">
+            <p class="sec-tag" style="margin-bottom:14px;">Podés sumar</p>
+            <div class="extras-grid" id="adicionales-grid"></div>
+        </div>
+    </section>
+
+
+    <!-- ── Cómo pedir ──────────────────────────────────────────── -->
+    <section style="background:var(--carbon); padding:90px 0;" id="como-pedir">
+        <div class="sec" style="padding-top:0;padding-bottom:0;">
+            <div class="sec-header">
+                <p class="sec-tag">Simple y rápido</p>
+                <h2 class="sec-titulo">Cómo hacer tu pedido</h2>
+            </div>
+            <div class="pasos-grid">
+                <div class="paso">
+                    <div class="paso-num">01</div>
+                    <i class="bi bi-list-check"></i>
+                    <h3>Elegí del menú</h3>
+                    <p>Entrá a "Armar mi pedido" y tocá lo que quieras.</p>
+                </div>
+                <div class="paso">
+                    <div class="paso-num">02</div>
+                    <i class="bi bi-bag-check"></i>
+                    <h3>Revisá el total</h3>
+                    <p>Elegí delivery o retiro y cómo pagás. El total se calcula solo.</p>
+                </div>
+                <div class="paso">
+                    <div class="paso-num">03</div>
+                    <i class="bi bi-whatsapp"></i>
+                    <h3>Confirmá por WhatsApp</h3>
+                    <p>Se abre WhatsApp con el pedido escrito: tocá Enviar y te confirmamos.</p>
+                </div>
+                <div class="paso">
+                    <div class="paso-num">04</div>
+                    <i class="bi bi-emoji-smile"></i>
+                    <h3>A comer</h3>
+                    <p>Te confirmamos el tiempo y recibís tu pedido caliente y listo para atacar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ── Horarios ────────────────────────────────────────────── -->
+    <section id="horarios">
+        <div class="sec">
+            <div class="horarios-grid">
+                <div>
+                    <p class="sec-tag">A qué hora encontrarnos</p>
+                    <h2 class="sec-titulo" style="margin-bottom:30px;">Horarios</h2>
+                    <div class="horarios-wrap" id="horarios-filas">
+                        <div class="horario-row">
+                            <span class="h-dia">Jueves a domingo</span>
+                            <span class="h-hora">21 a 1 h</span>
+                        </div>
+                        <div class="horario-row">
+                            <span class="h-dia">Lunes a miércoles</span>
+                            <span class="h-hora cerrado">Cerrado</span>
+                        </div>
+                    </div>
+                    <p class="menu-nota" id="aviso-horario" hidden></p>
+                </div>
+                <div>
+                    <p class="sec-tag">Zona de cobertura</p>
+                    <h2 class="sec-titulo" style="margin-bottom:14px;font-size:2rem;">Delivery en La Banda</h2>
+                    <p style="color:var(--texto-suave);font-size:0.94rem;line-height:1.7;margin-bottom:22px;" id="texto-envio">
+                        Hacemos delivery dentro de la ciudad. El costo del envío lo ves al armar tu pedido.
+                    </p>
+                    <a href="https://wa.me/5493855702807?text=Hola!+Quiero+saber+si+hacen+delivery+a+mi+zona."
+                        target="_blank" rel="noopener" class="btn-outline" style="display:inline-flex;">
+                        <i class="bi bi-geo-alt"></i> Consultá tu zona
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ── CTA final ───────────────────────────────────────────── -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <img src="./Logo.jpeg" alt="Venutto" class="cta-logo">
+            <h2>¿Tenés <span>hambre?</span></h2>
+            <p>Armá tu pedido y en minutos te confirmamos.</p>
+            <a href="./pedir.html" class="btn-blanco">
+                <i class="bi bi-bag-plus"></i> Armar mi pedido
+            </a>
+        </div>
+    </section>
+
+
+    <!-- ── WhatsApp flotante (consultas) ───────────────────────── -->
+    <a class="wa-flotante" href="https://wa.me/5493855702807" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 16 16">
+            <path
+                d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232" />
+        </svg>
+    </a>
+
+
+    <!-- ── Footer ──────────────────────────────────────────────── -->
+    <footer>
+        <div class="footer-logo">
+            <img src="./Logo.jpeg" alt="Venutto">
+            <div class="footer-logo-texto">Venutto<span>Fast Food</span></div>
+        </div>
+        <div class="footer-redes">
+            <a href="https://instagram.com/venutto.oficial" target="_blank" rel="noopener" aria-label="Instagram"><i
+                    class="bi bi-instagram"></i></a>
+            <a href="https://wa.me/5493855702807" target="_blank" rel="noopener" aria-label="WhatsApp"><i
+                    class="bi bi-whatsapp"></i></a>
+        </div>
+        <div class="footer-marca">© 2026 · Venutto Fast Food · Santiago del Estero</div>
+    </footer>
+
+
+    <!-- ── Scripts ─────────────────────────────────────────────── -->
+    <script type="module" src="./js/vitrina.js"></script>
+</body>
+
+</html>
