@@ -75,6 +75,7 @@ const textoWa = (u) => new URL(u).searchParams.get("text");
   // ---- 3. Revisar el pedido; Atrás y recargar no pierden nada ----
   await p.click("#ver-pedido");
   assert.equal(await p.evaluate(() => location.hash), "#pedido");
+  await p.waitForSelector(".linea-nombre");
   const lineas = await p.$$eval(".linea-nombre", (l) => l.map((x) => x.textContent));
   assert.deepEqual(lineas, ["2 Hamburguesas completas", "1 Lomito completo", "1 Lomito completo (Pan árabe)", "2 Potecitos de mayonesa"]);
   await p.goBack();
@@ -85,29 +86,23 @@ const textoWa = (u) => new URL(u).searchParams.get("text");
   assert.equal(await p.textContent("#barra-total"), "Total $35.200");
   await p.click("#ver-pedido");
 
-  // ---- 4. Checkout: errores claros, delivery pide dirección, retiro no ----
+  // ---- 4. Checkout: errores claros; delivery pide la ubicación por WhatsApp, sin formulario de dirección ----
   await p.click("#enviar");
   assert.equal(await p.textContent("#err-entrega"), "Elegí si querés delivery o retiro.");
   assert.equal(await p.textContent("#err-pago"), "Elegí cómo vas a pagar.");
   assert.equal(abiertos.length, 0);
   await p.check('input[name="entrega"][value="delivery"]');
-  assert.ok(await p.isVisible("#calle"));
+  assert.ok(await p.isVisible("#q-ubicacion"));
+  assert.match(await p.textContent("#q-ubicacion"), /Envianos tu ubicación después de enviar este pedido.*entre 3 y 6 metros/s);
+  assert.equal(await p.locator("#paso-pedido input[type=text], #paso-pedido input:not([type]), #paso-pedido textarea").count(), 1, "solo queda el campo opcional de efectivo");
   assert.match(await p.textContent("#resumen"), /Envío\$1\.000.*Total\$36\.200/);
   await p.check('input[name="pago"][value="transferencia"]');
   assert.match(await p.textContent("#alias"), /javier\.toledo\.nx/);
-  await p.click("#enviar");
-  assert.equal(await p.textContent("#err-calle"), "Escribí la calle.");
-  assert.match(await p.textContent("#err-numero"), /número/);
-  assert.equal(await p.evaluate(() => document.activeElement.id), "calle");
-  await p.fill("#calle", "Av. Belgrano");
-  await p.fill("#numero", "1234");
-  await p.fill("#barrio", "Centro");
   await p.check('input[name="entrega"][value="retiro"]');
-  assert.ok(await p.isHidden("#calle"));
+  assert.ok(await p.isHidden("#q-ubicacion"));
   assert.doesNotMatch(await p.textContent("#resumen"), /Envío/);
   assert.match(await p.textContent("#resumen"), /Total\$35\.200/);
   await p.check('input[name="entrega"][value="delivery"]');
-  assert.equal(await p.inputValue("#calle"), "Av. Belgrano");
   await p.check('input[name="pago"][value="dividido"]');
   assert.ok(await p.isVisible("#campo-efectivo"));
   await p.check('input[name="pago"][value="transferencia"]');
@@ -133,7 +128,7 @@ const textoWa = (u) => new URL(u).searchParams.get("text");
     "• 2 Hamburguesas completas — $15.000",
     "• 1 Lomito completo (Pan árabe) — $10.200",
     "• 2 Potecitos de mayonesa — $1.000", "",
-    "Entrega: Delivery", "Dirección: Av. Belgrano 1234, Centro", "Pago: Transferencia", "",
+    "Entrega: Delivery", "Ubicación: te la mando en el próximo mensaje.", "Pago: Transferencia", "",
     "Subtotal de productos: $26.200", "Envío: $1.000", "TOTAL: $27.200",
   ].join("\n"));
   assert.ok(!/\d\s*[x×]\s/i.test(textoWa(url)));
@@ -143,6 +138,7 @@ const textoWa = (u) => new URL(u).searchParams.get("text");
   await p.waitForSelector("#paso-listo:not([hidden])");
   assert.match(await p.textContent("#titulo-listo"), /tocá Enviar en WhatsApp/);
   assert.doesNotMatch(await p.textContent("#paso-listo"), /recibido|confirmado/i);
+  assert.ok(await p.isVisible("#listo-ubicacion"), "recuerda mandar la ubicación");
   assert.equal(await p.getAttribute("#abrir-wa", "href"), url);
 
   // ---- 7. Al abrir de nuevo el menú se ve el precio nuevo; un producto agotado se saca del pedido ----
@@ -183,6 +179,8 @@ const textoWa = (u) => new URL(u).searchParams.get("text");
     .filter((x) => x.h < 48 || x.w < 48));
   assert.deepEqual(chicos, [], "Botones de menos de 48 px");
   assert.equal(await p.evaluate(() => getComputedStyle(document.body).fontSize), "18px");
+  const altoFoto = await p.$eval(".producto .foto", (i) => i.getBoundingClientRect().height);
+  assert.ok(altoFoto <= 160, "Foto de " + altoFoto + " px de alto");
   assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), "La página se desborda de costado");
   // La barra no tapa el último producto
   await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight));

@@ -56,11 +56,10 @@ test("cambio de precio con el carrito armado: se muestra, se actualiza y se avis
   assert.deepEqual(revisarPrecios(r.carrito, indexar(menu2)).cambios, []);
 });
 
-test("checkout: delivery pide calle y número, retiro no; medios de pago reales", () => {
+test("checkout: solo entrega y pago son obligatorios; medios de pago reales", () => {
   const m = MENU.menu;
   assert.deepEqual(Object.keys(validar({}, m)), ["entrega", "pago"]);
-  assert.deepEqual(Object.keys(validar({ entrega: "delivery", pago: "efectivo" }, m)), ["calle", "numero"]);
-  assert.deepEqual(validar({ entrega: "delivery", calle: "Belgrano", numero: "123", pago: "efectivo" }, m), {});
+  assert.deepEqual(validar({ entrega: "delivery", pago: "efectivo" }, m), {});
   assert.deepEqual(validar({ entrega: "retiro", pago: "transferencia" }, m), {});
   assert.deepEqual(Object.keys(validar({ entrega: "retiro", pago: "mercadopago" }, m)), ["pago"]);
   assert.deepEqual(validar({ entrega: "retiro", pago: "dividido", efectivo: "" }, m, 1000000), {});
@@ -79,7 +78,7 @@ const COT = {
 };
 
 test("mensaje de WhatsApp: singular y plural, sin x, importes de la cotización", () => {
-  const d = { entrega: "delivery", calle: "Av. Belgrano", numero: "1234", barrio: "Centro", referencias: "Portón negro", pago: "transferencia", nombre: "", observaciones: "" };
+  const d = { entrega: "delivery", pago: "transferencia" };
   const txt = armarMensaje(COT, d, "Venutto");
   assert.equal(txt, [
     "¡Hola, Venutto! Quiero hacer este pedido.", "",
@@ -87,15 +86,15 @@ test("mensaje de WhatsApp: singular y plural, sin x, importes de la cotización"
     "• 1 Porción de papas con cheddar M — $4.000",
     "• 1 Potecito de mayonesa — $500",
     "• 3 Lomitos completos (Pan árabe) — $30.600", "",
-    "Entrega: Delivery", "Dirección: Av. Belgrano 1234, Centro", "Referencias: Portón negro", "Pago: Transferencia", "",
+    "Entrega: Delivery", "Ubicación: te la mando en el próximo mensaje.", "Pago: Transferencia", "",
     "Subtotal de productos: $47.100", "Envío: $1.000", "TOTAL: $48.100",
   ].join("\n"));
   assert.ok(!/\d+\s*[x×]\s/i.test(txt));
-  const ret = armarMensaje({ ...COT, envio: null, total: 47100 }, { entrega: "retiro", pago: "dividido", efectivo: "20.000", nombre: "Ana", observaciones: "Sin tomate" }, "Venutto");
-  assert.match(ret, /Entrega: Retiro en el local\nPago: Dividido \(\$20\.000 en efectivo y \$27\.100 por transferencia\)\nNombre: Ana\nObservaciones: Sin tomate\n\nSubtotal de productos: \$47\.100\nTOTAL: \$47\.100$/);
-  assert.doesNotMatch(ret, /Dirección|Envío/);
-  const sinEnvio = armarMensaje({ ...COT, envio: null, envio_a_confirmar: true, total: 47100 }, { entrega: "delivery", calle: "X", numero: "1", pago: "efectivo" });
-  assert.match(sinEnvio, /Envío: a confirmar\nTOTAL sin el envío: \$47\.100$/);
+  const ret = armarMensaje({ ...COT, envio: null, total: 47100 }, { entrega: "retiro", pago: "dividido", efectivo: "20.000" }, "Venutto");
+  assert.match(ret, /Entrega: Retiro en el local\nPago: Dividido \(\$20\.000 en efectivo y \$27\.100 por transferencia\)\n\nSubtotal de productos: \$47\.100\nTOTAL: \$47\.100$/);
+  assert.doesNotMatch(ret, /Ubicación|Envío/);
+  const sinEnvio = armarMensaje({ ...COT, envio: null, envio_a_confirmar: true, total: 47100 }, { entrega: "delivery", pago: "efectivo" });
+  assert.match(sinEnvio, /Envío: a confirmar\nTOTAL: \*SIN EL ENVÍO\*: \$47\.100$/);
 });
 
 test("URL de WhatsApp con el número oficial y el texto codificado", () => {

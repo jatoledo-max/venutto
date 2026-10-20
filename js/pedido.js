@@ -76,10 +76,6 @@ export const PAGOS = { efectivo: "Efectivo", transferencia: "Transferencia", div
 export function validar(d, menu, total) {
   const e = {};
   if (d.entrega !== "delivery" && d.entrega !== "retiro") e.entrega = "Elegí si querés delivery o retiro.";
-  if (d.entrega === "delivery") {
-    if (!String(d.calle || "").trim()) e.calle = "Escribí la calle.";
-    if (!String(d.numero || "").trim()) e.numero = "Escribí el número de la casa. Si no tiene, poné S/N.";
-  }
   const pagos = (menu && menu.pagos) || [];
   if (!pagos.includes(d.pago)) e.pago = "Elegí cómo vas a pagar.";
   if (d.pago === "dividido" && String(d.efectivo || "").trim()) {
@@ -97,24 +93,19 @@ export function armarMensaje(cot, d, negocio) {
   cot.renglones.forEach((l) => r.push("• " + nombreLinea({}, l) + " — " + pesos(cent(l.subtotal))));
   r.push("");
   r.push("Entrega: " + (d.entrega === "delivery" ? "Delivery" : "Retiro en el local"));
-  if (d.entrega === "delivery") {
-    r.push("Dirección: " + [String(d.calle).trim() + " " + String(d.numero).trim(), String(d.barrio || "").trim()].filter(Boolean).join(", "));
-    if (String(d.referencias || "").trim()) r.push("Referencias: " + String(d.referencias).trim());
-  }
+  if (d.entrega === "delivery") r.push("Ubicación: te la mando en el próximo mensaje.");
   let pago = "Pago: " + (PAGOS[d.pago] || d.pago);
   if (d.pago === "dividido" && String(d.efectivo || "").trim()) {
     const ef = cent(String(d.efectivo).replace(/\./g, "").replace(",", "."));
     pago = "Pago: Dividido (" + pesos(ef) + " en efectivo y " + pesos(cent(cot.total) - ef) + " por transferencia)";
   }
   r.push(pago);
-  if (String(d.nombre || "").trim()) r.push("Nombre: " + String(d.nombre).trim());
-  if (String(d.observaciones || "").trim()) r.push("Observaciones: " + String(d.observaciones).trim());
   r.push("");
   r.push("Subtotal de productos: " + pesos(cent(cot.subtotal)));
   if (d.entrega === "delivery") {
     if (cot.envio_a_confirmar) {
       r.push("Envío: a confirmar");
-      r.push("TOTAL sin el envío: " + pesos(cent(cot.total)));
+      r.push("TOTAL: *SIN EL ENVÍO*: " + pesos(cent(cot.total)));
     } else {
       r.push("Envío: " + pesos(cent(cot.envio)));
       r.push("TOTAL: " + pesos(cent(cot.total)));

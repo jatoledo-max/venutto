@@ -60,16 +60,10 @@
                 <p class="error-campo" id="err-entrega" hidden></p>
             </fieldset>
 
-            <fieldset class="pregunta" id="q-direccion" hidden>
-                <legend>¿Dónde lo llevamos?</legend>
-                <label class="campo">Calle<input id="calle" name="calle" autocomplete="address-line1" maxlength="80" aria-describedby="err-calle"></label>
-                <p class="error-campo" id="err-calle" hidden></p>
-                <label class="campo">Número<input id="numero" name="numero" inputmode="text" maxlength="12" aria-describedby="err-numero"></label>
-                <p class="error-campo" id="err-numero" hidden></p>
-                <label class="campo">Barrio o zona <span class="opc">(opcional)</span><input id="barrio" name="barrio" maxlength="60"></label>
-                <label class="campo">Referencias <span class="opc">(opcional)</span><input id="referencias" name="referencias" maxlength="120" placeholder="Ej: portón negro, timbre 2"></label>
-                <p class="ayuda">Si te queda más cómodo, después podés mandarnos tu ubicación por WhatsApp.</p>
-            </fieldset>
+            <div class="aviso-ubicacion" id="q-ubicacion" hidden>
+                <b>📍 Envianos tu ubicación después de enviar este pedido.</b>
+                <span>Recomendamos esperar a que el margen de precisión esté entre 3 y 6 metros.</span>
+            </div>
 
             <fieldset class="pregunta" id="q-pago">
                 <legend>¿Cómo vas a pagar?</legend>
@@ -84,11 +78,6 @@
                 <p class="error-campo" id="err-efectivo" hidden></p>
             </fieldset>
 
-            <fieldset class="pregunta">
-                <legend>Últimos detalles <span class="opc">(opcional)</span></legend>
-                <label class="campo">Tu nombre<input id="nombre" name="nombre" autocomplete="given-name" maxlength="40"></label>
-                <label class="campo">Observaciones<textarea id="observaciones" name="observaciones" rows="2" maxlength="200" placeholder="Ej: sin tomate"></textarea></label>
-            </fieldset>
 
             <div class="resumen" id="resumen" aria-live="polite"></div>
             <p class="ayuda">Al tocar el botón se abre WhatsApp con tu pedido escrito. <b>Para mandarlo, tocá Enviar en WhatsApp.</b> Te respondemos para confirmar disponibilidad y tiempo de entrega.</p>
@@ -101,6 +90,7 @@
     <main id="paso-listo" class="paso" hidden>
         <h1 tabindex="-1" id="titulo-listo">Falta un paso: tocá Enviar en WhatsApp</h1>
         <p class="grande">Abrimos WhatsApp con tu pedido escrito. <b>Si no lo mandás desde WhatsApp, no nos llega.</b></p>
+        <p class="aviso-ubicacion" id="listo-ubicacion" hidden><b>📍 Después mandanos tu ubicación por WhatsApp.</b> <span>Esperá a que el margen de precisión esté entre 3 y 6 metros.</span></p>
         <p>Cuando lo recibamos te respondemos para confirmar disponibilidad, el total y el tiempo de entrega.</p>
         <a class="btn-wa" id="abrir-wa" href="#">Abrir WhatsApp de nuevo</a>
         <button type="button" class="btn-secundario ancho" id="volver-pedido">Volver a mi pedido</button>
