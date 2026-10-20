@@ -9,7 +9,7 @@
         content="Venutto Fast Food. Lomitos, hamburguesas y sándwich de milanesa en La Banda. Delivery y take away. Armá tu pedido y confirmalo por WhatsApp.">
     <meta property="og:title" content="Venutto Fast Food — Comida con sabor">
     <meta property="og:description"
-        content="Lomitos, hamburguesas y sánguches. Delivery y take away. Jueves a Domingos 21–00:30hs.">
+        content="Lomitos, hamburguesas y sánguches. Delivery y take away. Pedí online y confirmá por WhatsApp.">
     <meta property="og:image" content="https://venutto.netlify.app/Logo.jpeg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -64,7 +64,7 @@
         <div class="banda-item"><i class="bi bi-bicycle"></i> Delivery</div>
         <div class="banda-item"><i class="bi bi-bag-check"></i> Take Away</div>
         <div class="banda-item"><i class="bi bi-whatsapp"></i> Pedido por WhatsApp</div>
-        <div class="banda-item"><i class="bi bi-clock"></i> Jue–Dom · 21:00 a 00:30</div>
+        <div class="banda-item"><i class="bi bi-clock"></i> <span id="banda-horario">Jueves a domingo de 21 a 1 h</span></div>
     </div>
 
 
@@ -75,7 +75,7 @@
             <h2 class="sec-titulo">El menú</h2>
         </div>
 
-        <!-- Tabs y cards se generan desde js/menu-data.js -->
+        <!-- Tabs y cards: js/vitrina.js, con los precios de la calculadora -->
         <div class="menu-tabs" id="menu-tabs"></div>
         <div id="menu-paneles"></div>
 
@@ -103,7 +103,7 @@
         </div>
 
         <!-- Adicionales -->
-        <div style="margin-top:44px;">
+        <div style="margin-top:44px;" id="adicionales-wrap">
             <p class="sec-tag" style="margin-bottom:14px;">Podés sumar</p>
             <div class="extras-grid" id="adicionales-grid"></div>
         </div>
@@ -122,19 +122,19 @@
                     <div class="paso-num">01</div>
                     <i class="bi bi-list-check"></i>
                     <h3>Elegí del menú</h3>
-                    <p>Entrá a "Armar pedido", tocá lo que quieras y sumá adicionales.</p>
+                    <p>Entrá a "Armar mi pedido" y tocá lo que quieras.</p>
                 </div>
                 <div class="paso">
                     <div class="paso-num">02</div>
                     <i class="bi bi-bag-check"></i>
                     <h3>Revisá el total</h3>
-                    <p>Elegí retiro o envío y cómo pagás. El total se calcula solo.</p>
+                    <p>Elegí delivery o retiro y cómo pagás. El total se calcula solo.</p>
                 </div>
                 <div class="paso">
                     <div class="paso-num">03</div>
                     <i class="bi bi-whatsapp"></i>
                     <h3>Confirmá por WhatsApp</h3>
-                    <p>Con un toque te lleva a nuestro WhatsApp con el pedido ya escrito.</p>
+                    <p>Se abre WhatsApp con el pedido escrito: tocá Enviar y te confirmamos.</p>
                 </div>
                 <div class="paso">
                     <div class="paso-num">04</div>
@@ -154,27 +154,23 @@
                 <div>
                     <p class="sec-tag">A qué hora encontrarnos</p>
                     <h2 class="sec-titulo" style="margin-bottom:30px;">Horarios</h2>
-                    <div class="horarios-wrap">
+                    <div class="horarios-wrap" id="horarios-filas">
                         <div class="horario-row">
-                            <span class="h-dia">Lunes</span>
+                            <span class="h-dia">Jueves a domingo</span>
+                            <span class="h-hora">21 a 1 h</span>
+                        </div>
+                        <div class="horario-row">
+                            <span class="h-dia">Lunes a miércoles</span>
                             <span class="h-hora cerrado">Cerrado</span>
                         </div>
-                        <div class="horario-row">
-                            <span class="h-dia">Jueves</span>
-                            <span class="h-hora cerrado">21:00 hs - 00:30 hs</span>
-                        </div>
-                        <div class="horario-row">
-                            <span class="h-dia">Viernes a Domingo</span>
-                            <span class="h-hora">21:00 hs — 01:00</span>
-                        </div>
                     </div>
+                    <p class="menu-nota" id="aviso-horario" hidden></p>
                 </div>
                 <div>
                     <p class="sec-tag">Zona de cobertura</p>
                     <h2 class="sec-titulo" style="margin-bottom:14px;font-size:2rem;">Delivery en La Banda</h2>
-                    <p style="color:var(--texto-suave);font-size:0.94rem;line-height:1.7;margin-bottom:22px;">
-                        Hacemos delivery dentro de la ciudad. El costo del envío va de $500 a $1500 según la distancia y
-                        te lo confirmamos cuando mandás tu ubicación.
+                    <p style="color:var(--texto-suave);font-size:0.94rem;line-height:1.7;margin-bottom:22px;" id="texto-envio">
+                        Hacemos delivery dentro de la ciudad. El costo del envío lo ves al armar tu pedido.
                     </p>
                     <a href="https://wa.me/5493855702807?text=Hola!+Quiero+saber+si+hacen+delivery+a+mi+zona."
                         target="_blank" rel="noopener" class="btn-outline" style="display:inline-flex;">
@@ -225,83 +221,7 @@
 
 
     <!-- ── Scripts ─────────────────────────────────────────────── -->
-    <script src="./js/menu-data.js"></script>
-    <script>
-        /* Vitrina: renderiza el menú con fotos (solo muestra, sin carrito).
-           El pedido se arma en pedir.html */
-        const fmt = n => "$" + Number(n).toLocaleString("es-AR");
-
-        function renderVitrina() {
-            const tabs = document.getElementById("menu-tabs");
-            const paneles = document.getElementById("menu-paneles");
-
-            CATEGORIAS.forEach((c, i) => {
-                const btn = document.createElement("button");
-                btn.className = "tab-btn" + (i === 0 ? " activo" : "");
-                btn.textContent = `${c.emoji} ${c.nombre}`;
-                btn.addEventListener("click", () => mostrarCat(c.id, btn));
-                tabs.appendChild(btn);
-
-                const panel = document.createElement("div");
-                panel.className = "cat-panel" + (i === 0 ? " visible" : "");
-                panel.id = "cat-" + c.id;
-
-                const grid = document.createElement("div");
-                grid.className = "productos-grid";
-                c.productos.forEach(p => {
-                    const card = document.createElement("div");
-                    card.className = "prod-card" + (p.promo ? " promo" : "");
-                    card.innerHTML = `
-                        ${p.promo ? '<span class="badge-promo">🔥 Promo</span>' : ""}
-                        <div class="prod-foto"><img src="./${p.img}" alt="${p.nombre}" loading="lazy"></div>
-                        <div class="prod-cuerpo">
-                            <div class="prod-nombre">${p.nombre}</div>
-                            <div class="prod-desc">${p.desc}</div>
-                            <div class="prod-footer">
-                                <div class="prod-precio">${fmt(p.precio)}</div>
-                                <a class="btn-agregar" href="./pedir.html"><i class="bi bi-plus-lg"></i> Agregar</a>
-                            </div>
-                        </div>`;
-                    grid.appendChild(card);
-                });
-                panel.appendChild(grid);
-
-                if (c.nota) {
-                    const nota = document.createElement("div");
-                    nota.className = "menu-nota";
-                    nota.innerHTML = c.nota;
-                    panel.appendChild(nota);
-                }
-                paneles.appendChild(panel);
-            });
-        }
-
-        function renderAdicionales() {
-            const grid = document.getElementById("adicionales-grid");
-            ADICIONALES.forEach(a => {
-                const chip = document.createElement("div");
-                chip.className = "extra-chip";
-                chip.innerHTML = `<i class="bi bi-plus-circle"></i> ${a.nombre} <span class="chip-precio">${fmt(a.precio)}</span>`;
-                grid.appendChild(chip);
-            });
-        }
-
-        function mostrarCat(id, btn) {
-            document.querySelectorAll(".cat-panel").forEach(p => p.classList.remove("visible"));
-            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
-            document.getElementById("cat-" + id).classList.add("visible");
-            btn.classList.add("activo");
-        }
-
-        window.addEventListener("scroll", () => {
-            document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 60);
-        });
-
-        document.addEventListener("DOMContentLoaded", () => {
-            renderVitrina();
-            renderAdicionales();
-        });
-    </script>
+    <script type="module" src="./js/vitrina.js"></script>
 </body>
 
 </html>

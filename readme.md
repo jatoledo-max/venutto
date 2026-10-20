@@ -1,73 +1,54 @@
-# Venutto Fast Food — Sitio + armador de pedido por WhatsApp
+# Venutto Fast Food: sitio y pedidos por WhatsApp
 
-Dos páginas:
+Tiene dos páginas:
 
-- **`index.html`** → la vitrina (menú con fotos, horarios, cómo pedir). Los botones
-  "Armar pedido" llevan a la página del armador.
-- **`pedir.html`** → el armador: el cliente elige productos, suma adicionales, ve el
-  total automático, elige retiro o envío y forma de pago, y confirma con un mensaje
-  ya escrito que llega directo a tu WhatsApp.
+- **`index.html`** es la portada: menú con fotos y precios, horarios, delivery y cómo pedir.
+- **`pedir.html`** es la página de pedidos. El cliente:
+  1. elige productos;
+  2. revisa el pedido y completa sus datos;
+  3. lo manda por WhatsApp.
+
+## De dónde salen los precios
+
+**No se editan acá.** Precios, productos, fotos, descripciones, medios de pago, envío y horarios
+se cargan en la calculadora ([CalculadoraDeGananciasMV](https://calculadoracostosmv.netlify.app)):
+
+- **En cada producto**, en la sección "En el menú de pedidos": mostrar, agotado, descripción, plural y foto.
+  El precio es el "Precio de venta" de la ficha.
+- **En Mi negocio > Menú de pedidos**: publicado, WhatsApp, alias, medios de pago, envío, horarios y aviso.
+
+Las dos páginas leen esos datos de la base de la calculadora con las funciones `menu_publico` y `cotizar_pedido`
+(archivo `supabase/menu.sql` del repo `calculadora-costos`). Solo reciben datos de venta, nunca costos ni márgenes.
+
+- **Cambio de precio:** se ve la próxima vez que la página lee el menú. Eso pasa al abrir la página, al volver a ella
+  después de un minuto o más, y siempre justo antes de abrir WhatsApp. No hay caché intermedia.
+- **Si el precio cambió** con el pedido ya armado, la página muestra qué cambió y pide revisar antes de enviar.
+- **Si la base no responde**, la página no muestra precios ni abre WhatsApp con importes sin verificar.
+  Ofrece escribir por WhatsApp sin el pedido armado.
 
 ## Estructura
 
 ```
-/
-├── index.html                  → vitrina (página de inicio)
-├── pedir.html                  → armador de pedido
-├── css/
-│   └── styles.css              → estilos (compartidos por las dos páginas)
-├── js/
-│   ├── menu-data.js            → ⭐ ÚNICO archivo para editar precios, fotos y productos
-│   └── app.js                  → lógica del armador (carrito, checkout, WhatsApp)
-├── Logo.jpeg
-├── lomitos.jpeg                → foto de los lomitos
-├── hamburguesa-cheddar.jpeg    → foto de las hamburguesas
-├── promo-hamburguesas.jpeg     → foto de las promos de hamburguesa
-├── sandwich-milanesa.jpeg      → foto de los sánguches
-├── porcion-papas.jpeg          → foto de la porción de papas
-├── papas-cheddar.jpeg          → foto de las papas con cheddar
-└── papas.jpeg                  → foto (papas con cheddar XL)
+index.html, pedir.html
+css/styles.css      → estilos de la portada
+css/pedir.css       → estilos de la página de pedidos (letra grande, botones de 48 px o más)
+js/config.js        → dirección de la base, clave pública y "dirección del menú" (venutto)
+js/catalogo.js      → lee el menú y cotiza el pedido en la base
+js/pedido.js        → carrito, importes en centavos, horarios, validación y mensaje de WhatsApp
+js/plural.js        → "1 Lomito completo" / "2 Lomitos completos" (copia del de la calculadora)
+js/pedir.js         → pantalla de pedidos
+js/vitrina.js       → menú de la portada
+tests/              → pruebas (npm test; tests/e2e/correr.sh)
 ```
 
-## Cómo cambiar precios, productos o fotos
+## Publicar
 
-Todo se edita en **`js/menu-data.js`** (un solo lugar, y se actualizan las dos páginas):
+Netlify publica lo que está en la rama `main` de este repo, o lo que se suba a mano en **Deploys**.
+No hay que compilar nada.
 
-- **Precio:** editá el número en `precio` (sin puntos ni símbolo). Ej: `precio: 9500`.
-- **Foto:** cambiá el nombre del archivo en `img`. Ej: `img: "lomitos.jpeg"`.
-  La imagen tiene que estar en la carpeta con ese mismo nombre.
-- **Agregar un producto:** copiá una línea `{ id, nombre, desc, precio, img }` y cambiala.
-  El `id` tiene que ser único.
-- **Alias de transferencia y número de WhatsApp:** en `CONFIG`, arriba del archivo.
+## Pruebas
 
-## Subir los cambios (GitHub → Netlify)
-
-1. Subí al repo `jatoledo-max/venutto`: `index.html`, `pedir.html`, las carpetas
-   `css/` y `js/`, y las imágenes nuevas (`lomitos.jpeg`, `hamburguesa-cheddar.jpeg`,
-   `promo-hamburguesas.jpeg`, `sandwich-milanesa.jpeg`, `porcion-papas.jpeg`,
-   `papas-cheddar.jpeg`).
-2. **Borrá el viejo `venutto.html`** del repo: ahora la página de inicio es `index.html`,
-   que Netlify sirve automáticamente.
-3. Commit y push. Netlify redeploya solo en unos segundos.
-
-> Nota: como el sitio ahora usa archivos separados, probalo en la URL de Netlify
-> (venutto.netlify.app). Si lo abrís con doble clic, tiene que ser con las carpetas
-> `css/` y `js/` al lado (si no, no cargan los estilos ni el menú).
-
-## Mensaje de bienvenida en WhatsApp Business
-
-`WhatsApp Business → Ajustes → Herramientas para la empresa → Mensaje de bienvenida`
-
-> ¡Hola! 👋 Gracias por escribir a **Venutto** 🍔
-> Armá tu pedido acá y en un toque te confirmamos:
-> 👉 https://venutto.netlify.app/pedir.html
->
-> Elegís lo que querés, ves el total y confirmás. ¡Te esperamos!
-
-## El flujo, de punta a punta
-
-1. El cliente te escribe → recibe el mensaje de bienvenida con el link a `pedir.html`.
-2. Elige productos y adicionales, ve el total automático.
-3. Elige **Retiro** o **Envío** (con envío pide dirección y le recuerda mandar ubicación).
-4. Elige **Transferencia** (alias copiable `javier.toledo.nx`) o **Efectivo**.
-5. Toca "Confirmar por WhatsApp" → te llega el pedido preformateado listo.
+- `npm test` prueba el carrito, los importes, el singular y plural, el mensaje, la URL de WhatsApp y los horarios.
+- `tests/e2e/correr.sh` prueba las dos páginas en un celular Android simulado contra las funciones SQL reales
+  de la calculadora (en un Postgres local). Incluye un cambio de precio con la página abierta, un producto agotado
+  y la base caída. Necesita Postgres, Playwright y el repo `calculadora-costos` al lado.

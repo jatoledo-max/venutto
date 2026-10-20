@@ -3,97 +3,119 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armá tu pedido — Venutto Fast Food</title>
-    <meta name="description" content="Armá tu pedido de Venutto: elegí, mirá el total y confirmá por WhatsApp.">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Hacé tu pedido — Venutto Fast Food</title>
+    <meta name="description" content="Elegí tu pedido de Venutto, mirá el total y mandalo por WhatsApp.">
+    <meta name="theme-color" content="#0c0c0c">
+    <link rel="icon" href="./Logo.jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@300;400;500&display=swap"
-        rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/pedir.css">
 </head>
 
 <body>
+    <a class="saltar" href="#productos">Saltar al menú</a>
 
-    <!-- ── Navbar ─────────────────────────────────────────────── -->
-    <nav class="navbar solido">
-        <a class="nav-logo" href="./index.html">
-            <img src="./Logo.jpeg" alt="Venutto Logo">
-            <div class="nav-logo-texto">Venutto<span>Fast Food</span></div>
+    <header class="cabecera">
+        <a class="marca" href="./index.html">
+            <img src="./Logo.jpeg" alt="" width="44" height="44">
+            <span>Venutto</span>
         </a>
-        <div class="nav-links">
-            <a href="./index.html"><i class="bi bi-arrow-left"></i> Volver al inicio</a>
-        </div>
-    </nav>
+        <a class="cabecera-link" href="./index.html">Inicio</a>
+    </header>
 
-
-    <!-- ── Página de pedido ────────────────────────────────────── -->
-    <main class="pedido-page">
-        <div class="pedido-head">
-            <a class="volver" href="./index.html"><i class="bi bi-arrow-left"></i> Volver al inicio</a>
-            <h1>Armá tu pedido</h1>
-            <p>Tocá "Agregar" en lo que quieras, sumá adicionales y confirmá por WhatsApp. El total se calcula solo.</p>
+    <!-- Paso 1: elegir productos -->
+    <main id="paso-menu" class="paso">
+        <div class="intro">
+            <h1>Hacé tu pedido</h1>
+            <p>Elegí lo que quieras, revisá el total y mandanos el pedido por WhatsApp. Te respondemos para confirmarlo.</p>
+            <p class="estado" id="estado-local" hidden></p>
+            <p class="aviso-negocio" id="aviso-negocio" hidden></p>
         </div>
 
-        <!-- Tabs y cards se generan desde js/menu-data.js -->
-        <div class="menu-tabs" id="menu-tabs"></div>
-        <div id="menu-paneles"></div>
+        <div id="cargando" class="cargando" role="status">Cargando el menú y los precios…</div>
+        <div id="error-menu" class="error-caja" role="alert" hidden></div>
+        <div id="cambios-precio" class="aviso-cambios" role="alert" hidden></div>
 
-        <!-- Adicionales -->
-        <div style="margin-top:44px;">
-            <p class="sec-tag" style="margin-bottom:14px;">Podés sumar</p>
-            <div class="extras-grid" id="adicionales-grid"></div>
-        </div>
+        <nav class="categorias" id="categorias" aria-label="Categorías del menú" hidden></nav>
+        <div id="productos"></div>
     </main>
 
+    <!-- Paso 2: revisar el pedido y completar los datos -->
+    <main id="paso-pedido" class="paso" hidden>
+        <button class="volver" type="button" id="volver-menu">← Seguir eligiendo</button>
+        <h1 tabindex="-1" id="titulo-pedido">Tu pedido</h1>
+        <div id="cambios-precio-2" class="aviso-cambios" role="alert" hidden></div>
+        <ul class="lineas" id="lineas"></ul>
+        <p class="vacio" id="pedido-vacio" hidden>Tu pedido está vacío. Tocá «Seguir eligiendo» para agregar productos.</p>
 
-    <!-- ── Botón flotante del carrito ──────────────────────────── -->
-    <button class="cart-fab" id="cart-fab" type="button" data-abrir-carrito>
-        <i class="bi bi-bag-fill"></i>
-        <span id="cart-fab-count">0</span> · Mi pedido
-        <span class="cart-fab-total" id="cart-fab-total">$0</span>
-    </button>
+        <form id="datos" novalidate>
+            <fieldset class="pregunta" id="q-entrega">
+                <legend>¿Cómo querés recibir tu pedido?</legend>
+                <div class="opciones-grandes">
+                    <label class="opcion"><input type="radio" name="entrega" value="delivery"> <span><b>Delivery</b><small id="txt-envio"></small></span></label>
+                    <label class="opcion"><input type="radio" name="entrega" value="retiro"> <span><b>Retiro</b><small>Lo buscás en el local</small></span></label>
+                </div>
+                <p class="error-campo" id="err-entrega" hidden></p>
+            </fieldset>
 
+            <fieldset class="pregunta" id="q-direccion" hidden>
+                <legend>¿Dónde lo llevamos?</legend>
+                <label class="campo">Calle<input id="calle" name="calle" autocomplete="address-line1" maxlength="80" aria-describedby="err-calle"></label>
+                <p class="error-campo" id="err-calle" hidden></p>
+                <label class="campo">Número<input id="numero" name="numero" inputmode="text" maxlength="12" aria-describedby="err-numero"></label>
+                <p class="error-campo" id="err-numero" hidden></p>
+                <label class="campo">Barrio o zona <span class="opc">(opcional)</span><input id="barrio" name="barrio" maxlength="60"></label>
+                <label class="campo">Referencias <span class="opc">(opcional)</span><input id="referencias" name="referencias" maxlength="120" placeholder="Ej: portón negro, timbre 2"></label>
+                <p class="ayuda">Si te queda más cómodo, después podés mandarnos tu ubicación por WhatsApp.</p>
+            </fieldset>
 
-    <!-- ══════════════════════════════════════════════════════════
-         DRAWER DEL CARRITO / CHECKOUT
-         ══════════════════════════════════════════════════════════ -->
-    <div class="drawer-overlay" id="drawer-overlay" data-cerrar-carrito></div>
+            <fieldset class="pregunta" id="q-pago">
+                <legend>¿Cómo vas a pagar?</legend>
+                <div class="opciones-grandes" id="opciones-pago"></div>
+                <p class="error-campo" id="err-pago" hidden></p>
+                <div class="alias" id="alias" hidden>
+                    <span>Alias para transferir: <b id="alias-texto"></b></span>
+                    <button type="button" class="btn-secundario" id="copiar-alias">Copiar alias</button>
+                </div>
+                <label class="campo" id="campo-efectivo" hidden>¿Cuánto pagás en efectivo? <span class="opc">(opcional)</span>
+                    <input id="efectivo" name="efectivo" inputmode="numeric" maxlength="10" placeholder="Ej: 10000" aria-describedby="err-efectivo"></label>
+                <p class="error-campo" id="err-efectivo" hidden></p>
+            </fieldset>
 
-    <aside class="drawer" id="drawer" aria-label="Tu pedido">
-        <div class="drawer-header">
-            <h3><i class="bi bi-bag-fill" style="color:var(--naranja)"></i> Tu pedido</h3>
-            <button class="drawer-cerrar" type="button" data-cerrar-carrito aria-label="Cerrar">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
+            <fieldset class="pregunta">
+                <legend>Últimos detalles <span class="opc">(opcional)</span></legend>
+                <label class="campo">Tu nombre<input id="nombre" name="nombre" autocomplete="given-name" maxlength="40"></label>
+                <label class="campo">Observaciones<textarea id="observaciones" name="observaciones" rows="2" maxlength="200" placeholder="Ej: sin tomate"></textarea></label>
+            </fieldset>
 
-        <div class="drawer-body" id="drawer-body">
-            <!-- Items del carrito, adicionales y checkout se generan por JS -->
-        </div>
+            <div class="resumen" id="resumen" aria-live="polite"></div>
+            <p class="ayuda">Al tocar el botón se abre WhatsApp con tu pedido escrito. <b>Para mandarlo, tocá Enviar en WhatsApp.</b> Te respondemos para confirmar disponibilidad y tiempo de entrega.</p>
+            <p class="error-caja" id="error-envio" role="alert" hidden></p>
+            <button type="submit" class="btn-wa" id="enviar">Enviar pedido por WhatsApp</button>
+        </form>
+    </main>
 
-        <div class="drawer-footer">
-            <div class="total-row">
-                <span class="total-label">Total</span>
-                <span class="total-monto" id="total-monto">$0</span>
-            </div>
-            <button class="btn-enviar" id="btn-enviar" type="button" disabled>
-                <i class="bi bi-whatsapp"></i> Confirmar por WhatsApp
-            </button>
-        </div>
-    </aside>
+    <!-- Paso 3: WhatsApp abierto -->
+    <main id="paso-listo" class="paso" hidden>
+        <h1 tabindex="-1" id="titulo-listo">Falta un paso: tocá Enviar en WhatsApp</h1>
+        <p class="grande">Abrimos WhatsApp con tu pedido escrito. <b>Si no lo mandás desde WhatsApp, no nos llega.</b></p>
+        <p>Cuando lo recibamos te respondemos para confirmar disponibilidad, el total y el tiempo de entrega.</p>
+        <a class="btn-wa" id="abrir-wa" href="#">Abrir WhatsApp de nuevo</a>
+        <button type="button" class="btn-secundario ancho" id="volver-pedido">Volver a mi pedido</button>
+        <button type="button" class="btn-secundario ancho" id="nuevo-pedido">Empezar un pedido nuevo</button>
+    </main>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+    <!-- Barra inferior: cantidad, total y seguir -->
+    <div class="barra" id="barra" hidden>
+        <div class="barra-info"><span id="barra-cant"></span><b id="barra-total"></b></div>
+        <button type="button" class="btn-principal" id="ver-pedido">Ver mi pedido</button>
+    </div>
 
+    <div class="aviso-flotante" id="aviso" role="status" aria-live="polite"></div>
 
-    <!-- ── Scripts ─────────────────────────────────────────────── -->
-    <script src="./js/menu-data.js"></script>
-    <script src="./js/app.js"></script>
+    <script type="module" src="./js/pedir.js"></script>
 </body>
 
 </html>
