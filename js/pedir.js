@@ -253,7 +253,7 @@ function pintarFormulario() {
       op.appendChild(lab);
     });
     if ((m.pagos || []).length === 1 && !d.pago) d.pago = m.pagos[0];
-    ["calle", "numero", "barrio", "referencias", "nombre", "observaciones", "efectivo"].forEach((k) => { $("#" + k).value = d[k] || ""; });
+    $("#efectivo").value = d.efectivo || "";
     document.querySelectorAll('input[name="entrega"]').forEach((r) => { r.checked = r.value === d.entrega; });
     document.querySelectorAll('input[name="pago"]').forEach((r) => { r.checked = r.value === d.pago; });
     $("#datos").oninput = leerFormulario;
@@ -262,7 +262,7 @@ function pintarFormulario() {
     $("#copiar-alias").onclick = copiarAlias;
     formListo = true;
   }
-  $("#q-direccion").hidden = d.entrega !== "delivery";
+  $("#q-ubicacion").hidden = d.entrega !== "delivery";
   $("#alias").hidden = !(m.alias && (d.pago === "transferencia" || d.pago === "dividido"));
   $("#alias-texto").textContent = m.alias || "";
   $("#campo-efectivo").hidden = d.pago !== "dividido";
@@ -270,7 +270,7 @@ function pintarFormulario() {
 }
 function leerFormulario(e) {
   const d = st.datos;
-  ["calle", "numero", "barrio", "referencias", "nombre", "observaciones", "efectivo"].forEach((k) => { d[k] = $("#" + k).value; });
+  d.efectivo = $("#efectivo").value;
   const en = document.querySelector('input[name="entrega"]:checked'); d.entrega = en ? en.value : d.entrega;
   const pa = document.querySelector('input[name="pago"]:checked'); d.pago = pa ? pa.value : d.pago;
   guardar();
@@ -295,13 +295,13 @@ async function copiarAlias() {
 }
 
 function mostrarErrores(errs) {
-  ["entrega", "calle", "numero", "pago", "efectivo"].forEach((k) => {
+  ["entrega", "pago", "efectivo"].forEach((k) => {
     const p = $("#err-" + k);
     if (p) { p.hidden = !errs[k]; p.textContent = errs[k] || ""; }
     const inp = $("#" + k);
     if (inp) inp.setAttribute("aria-invalid", errs[k] ? "true" : "false");
   });
-  const primero = ["entrega", "calle", "numero", "pago", "efectivo"].find((k) => errs[k]);
+  const primero = ["entrega", "pago", "efectivo"].find((k) => errs[k]);
   if (primero) {
     const foco = $("#" + primero) || document.querySelector('input[name="' + primero + '"]');
     if (foco) { foco.focus(); foco.scrollIntoView({ block: "center" }); }
@@ -356,6 +356,7 @@ function pintarTodo() {
   $("#paso-menu").hidden = paso !== "menu";
   $("#paso-pedido").hidden = paso !== "pedido";
   $("#paso-listo").hidden = paso !== "listo";
+  $("#listo-ubicacion").hidden = st.datos.entrega !== "delivery";
   if (st.menu) {
     if (paso === "menu") pintarMenu();
     if (paso === "pedido") pintarPedido();
